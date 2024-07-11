@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import FutbolistaService from '../services/FutbolistaService';
+import { Link } from 'react-router-dom';
 
 const ListFutbolistasComponent = () => {
     const [futbolistas, setFutbolistas] = useState([]);
@@ -32,7 +33,12 @@ const ListFutbolistasComponent = () => {
                 const futbolistaList = response.data;
                 if (futbolistaList.length > 0) {
                     const futbolista = futbolistaList[0];
-                    alert(`ID: ${futbolista.id}\nNombres: ${futbolista.nombres}\nApellidos: ${futbolista.apellidos}\nNacimiento: ${new Date(futbolista.fecha_nacimiento).toLocaleDateString()}\nCaracteristicas: ${futbolista.caracteristicas}\nPosición: ${futbolista.posicion.nombre}`);
+                    alert(`ID: ${futbolista.id}
+                        \nNombres: ${futbolista.nombres}
+                        \nApellidos: ${futbolista.apellidos}
+                        \nNacimiento: ${new Date(futbolista.fecha_nacimiento).toLocaleDateString()}
+                        \nCaracteristicas: ${futbolista.caracteristicas}
+                        \nPosición: ${futbolista.posicion.nombre}`);
                 } else {
                     alert('Futbolista no encontrado');
                 }
@@ -56,6 +62,7 @@ const ListFutbolistasComponent = () => {
     return (
         <div className='container'>
             <h2 className='text-center'>Lista de Futbolistas</h2>
+            <Link to="/add-futbolista" className='btn btn-primary mb-2'>Agregar Futbolista</Link>
             <div className='row mb-3'>
                 <div className='col-md-4'>
                     <input 

@@ -10,6 +10,15 @@ class FutbolistaService {
     getFutbolistaById(id) {
         return axios.get(`${FUTBOLISTA_BASE_RES_API_URL}/buscarPorId/${id}`);
     }
+
+    getAllPosiciones(){
+        return axios.get(`${FUTBOLISTA_BASE_RES_API_URL}/posiciones`);
+    }
+
+    createFutbolista(futbolista){
+        return axios.post(`${FUTBOLISTA_BASE_RES_API_URL}/registrarFutbolista`,futbolista);
+    }
+    
 }
 
 export default new FutbolistaService();

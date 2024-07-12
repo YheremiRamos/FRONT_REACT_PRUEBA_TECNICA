@@ -16,9 +16,25 @@ class FutbolistaService {
     }
 
     createFutbolista(futbolista){
-        return axios.post(`${FUTBOLISTA_BASE_RES_API_URL}/registrarFutbolista`,futbolista);
+        return axios.post(`${FUTBOLISTA_BASE_RES_API_URL}/registrarFutbolista`, futbolista, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     }
-    
+
+    updateFutbolista(futbolista){
+        return axios.put(`${FUTBOLISTA_BASE_RES_API_URL}/actualizaFutbolista`, futbolista, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    deleteFutbolista(id){
+        return axios.delete(`${FUTBOLISTA_BASE_RES_API_URL}/eliminaFutbolista/${id}`);
+    }
+
 }
 
 export default new FutbolistaService();

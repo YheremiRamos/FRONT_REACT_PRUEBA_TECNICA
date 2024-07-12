@@ -1,20 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import FutbolistaService from '../services/FutbolistaService';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 export const AddFutbolistaComponent = () => {
-
     const [nombres, setNombres] = useState("");
     const [apellidos, setApellidos] = useState("");
     const [fecha_nacimiento, setFecha_Nacimiento] = useState("");
     const [caracteristicas, setCaracteristicas] = useState("");
     const [posicionId, setPosicionId] = useState("");
     const [posiciones, setPosiciones] = useState([]);
+    const { id } = useParams();
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Función para obtener las posiciones desde la base de datos
+        if (id) {
+            FutbolistaService.getFutbolistaById(id).then((response) => {
+                const futbolista = response.data[0];  
+                setNombres(futbolista.nombres);
+                setApellidos(futbolista.apellidos);
+                setFecha_Nacimiento(futbolista.fecha_nacimiento);
+                setCaracteristicas(futbolista.caracteristicas);
+                setPosicionId(futbolista.posicion ? futbolista.posicion.id : "");
+            }).catch(error => {
+                console.log("Error al obtener futbolista:", error);
+            });
+        }
+    }, [id]);
+
+    useEffect(() => {
         const fetchPosiciones = async () => {
             try {
                 const response = await FutbolistaService.getAllPosiciones();
@@ -31,33 +45,44 @@ export const AddFutbolistaComponent = () => {
         e.preventDefault();
         const selectedPosicion = posiciones.find(pos => pos.id === parseInt(posicionId));
         const futbolista = {
+            id: id ? parseInt(id) : null,  
             nombres,
             apellidos,
             fecha_nacimiento,
             caracteristicas,
-            posicion: selectedPosicion
+            posicion: selectedPosicion ? { id: selectedPosicion.id, nombre: selectedPosicion.nombre } : null
         };
-
-        FutbolistaService.createFutbolista(futbolista).then((response) => {
-            console.log(response);
-            navigate("/futbolistas");
-
-        }).catch(error => {
-            console.log(error);
-        });
-
-        console.log(futbolista);
+    
+        if (id) {
+            FutbolistaService.updateFutbolista(futbolista).then((response) => {
+                console.log(response);
+                alert("Se actualizó correctamente");
+            }).catch(error => {
+                console.log(error);
+            });
+        } else {
+            FutbolistaService.createFutbolista(futbolista).then((response) => {
+                console.log(response);
+                navigate("/futbolistas");
+            }).catch(error => {
+                console.log(error);
+            });
+        }
     }
     
+    
+
+    const title = id ? 'Actualizar Futbolista' : 'Registro de Futbolista';
+
     return (
         <div>
             <div className='container'>
                 <div className='row'>
                     <div className='card col-md-6 offset-md-3 offset-md-3'>
-                        <h2 className='text-center'>Registro de futbolistas</h2>
+                        <h2 className='text-center'>{title}</h2>
                         <div className='card-body'>
                             <form onSubmit={saveFutbolista}>
-                                
+
                                 <div className='form-group mb-2'>
                                     <label className='form-label'>Nombres</label>
                                     <input
@@ -122,7 +147,7 @@ export const AddFutbolistaComponent = () => {
                                 </div>
 
                                 <div className='botones'>
-                                    <button type="submit" className="btn btn-primary mb-2">Registrar</button>
+                                    <button type="submit" onClick={(e) => saveFutbolista(e)}  className="btn btn-primary mb-2">{id ? 'Actualizar' : 'Registrar'}</button>
                                     <Link to="/futbolistas" className='btn btn-danger mb-2'>Cancelar</Link>
                                 </div>
 

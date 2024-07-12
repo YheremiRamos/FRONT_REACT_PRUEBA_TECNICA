@@ -8,20 +8,26 @@ const ListFutbolistasComponent = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [futbolistasPerPage] = useState(8);
 
+
+
     useEffect(() => {
-        FutbolistaService.getAllFutbolistas()
-            .then(response => {
-                const futbolistasWithFormattedDates = response.data.map(futbolista => ({
-                    ...futbolista,
-                    nacimiento: new Date(futbolista.fecha_nacimiento)
-                }));
-                setFutbolistas(futbolistasWithFormattedDates);
-                console.log(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching futbolistas:', error);
-            });
+        listarFutbolistas();
     }, []);
+
+    const listarFutbolistas = () =>{
+        FutbolistaService.getAllFutbolistas()
+        .then(response => {
+            const futbolistasWithFormattedDates = response.data.map(futbolista => ({
+                ...futbolista,
+                nacimiento: new Date(futbolista.fecha_nacimiento)
+            }));
+            setFutbolistas(futbolistasWithFormattedDates);
+            console.log(response.data);
+        })
+        .catch(error => {
+            console.error('Error fetching futbolistas:', error);
+        });
+    }
 
     const handleSearch = () => {
         if (searchId === '') {
@@ -59,6 +65,17 @@ const ListFutbolistasComponent = () => {
 
     const totalPages = Math.ceil(futbolistas.length / futbolistasPerPage);
 
+    //ELIMINAR
+    const deleteFutbolista = (id) =>{
+        FutbolistaService.deleteFutbolista(id).then((response) => {
+            listarFutbolistas();
+        }).catch(error =>{
+            console.log(error);
+        });
+    }
+
+
+
     return (
         <div className='container'>
             <h2 className='text-center'>Lista de Futbolistas</h2>
@@ -86,6 +103,7 @@ const ListFutbolistasComponent = () => {
                         <th>Nacimiento</th>
                         <th>Caracteristicas</th>
                         <th>Posición</th>
+                        <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -97,6 +115,10 @@ const ListFutbolistasComponent = () => {
                             <td>{futbolista.nacimiento.toLocaleDateString()}</td>
                             <td>{futbolista.caracteristicas}</td>
                             <td>{futbolista.posicion.nombre}</td>
+                            <td>
+                                <Link className='btn btn-info' to={`/edit-futbolista/${futbolista.id}`}>Actualizar</Link>
+                                <button className='btn btn-danger' onClick={() => deleteFutbolista(futbolista.id)} >Eliminar</button>
+                            </td>
                         </tr>
                     ))}
                 </tbody>

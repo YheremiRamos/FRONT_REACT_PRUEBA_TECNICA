@@ -18,9 +18,9 @@ function App() {
           <Route exact path='/' element={<ListFutbolistasComponent />}></Route>
           <Route path='/futbolistas' element={<ListFutbolistasComponent />}></Route>
           <Route path='/add-futbolista' element={<AddFutbolistaComponent />}></Route>
+          <Route path='/edit-futbolista/:id' element={<AddFutbolistaComponent />}></Route>
         </Routes>
       </div>
-      <FooterComponent />
       </BrowserRouter>
     </div>
 
